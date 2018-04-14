@@ -10,10 +10,8 @@ export default ({ config, db }) => {
 
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
-
-	// perhaps expose some API metadata at the root
+	
 	api.get('/', (req, res) => {
-		//res.send("Hello world!");
 		res.json({ version });
 	});
 
@@ -37,20 +35,16 @@ export default ({ config, db }) => {
 	});
 
 	api.post('/transaction', (req, res) => {
-		console.log("%%% reached the post transaction API route!");
-		console.log(req.body);
-		//let weiAmount = Web3.utils.toWei(req.body.amount);
 		postTransaction(req.body.privateKey, req.body.destination, req.body.amount, res).then(result => 
 			{
 				console.log("this is the result:");
 				console.log(result);
 				res.status(202).json({
 					"status": "ok",
-					"transactionHash": result
+					"receipt": result
 				});
 			}
 		);
-		console.log("FINISHED post transaction!:");
 	});
 
 	return api;
