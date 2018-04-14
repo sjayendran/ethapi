@@ -1,10 +1,8 @@
-Express & ES6 REST API Boilerplate
+Ethereum API assignment for Keyrock.
 ==================================
 
 Built using the ES6 RESTful Express API Template:
 https://github.com/developit/express-es6-rest-api
-
-Ethereum API assignment for Keyrock.
 
 API Routes
 ----------
