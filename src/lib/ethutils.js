@@ -28,7 +28,7 @@ export const createWallet = () => {
 
 //Execute Transaction between two Ethereum addresses using 
 //the source private key and the destination address
-export const postTransaction = (fromPrivKey, toEthAddr, amount, resp) => {
+export const postTransaction = (fromPrivKey, toEthAddr, amount) => {
     let privateKey = new Buffer(fromPrivKey, 'hex');
     let derivedFromAddress = '0x' + ethUtilLib.privateToAddress(privateKey).toString('hex');
     
@@ -50,10 +50,6 @@ export const postTransaction = (fromPrivKey, toEthAddr, amount, resp) => {
             let serializedTx = tx.serialize();
             
             return sendTransactionAfterSigning(serializedTx);
-        }).catch(err => {
-            //primarily to catch insufficient funds error
-            respondWithError(err.toString(), resp);
-            return null;
         });
     }
     else{
@@ -84,11 +80,4 @@ const sendTransactionAfterSigning = (serializedTx) => {
 const validAddress = (addr) => {
     addr = addr.replace("0x", "");
     return addr.length == 40;
-}
-
-const respondWithError = (errTxt, resp) => {
-    resp.status(400).json({
-        "status": "error",
-        "error": errTxt
-    });
 }

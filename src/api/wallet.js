@@ -40,7 +40,7 @@ walletAPI.get('/createWallet', (req, res) => {
 //Route to send Ether from one Ethereum source address to another destination address
 walletAPI.post('/transaction', (req, res) => {
     try{
-        postTransaction(req.body.privateKey, req.body.destination, req.body.amount, res).then(result => 
+        postTransaction(req.body.privateKey, req.body.destination, req.body.amount).then(result => 
             {	if(result !== null){
                     res.status(200).json({
                         "status": "ok",
@@ -48,7 +48,13 @@ walletAPI.post('/transaction', (req, res) => {
                     });
                 }
             }
-        )
+        ).catch(err => {
+            // err can be logged here instead of exposing it from the API
+            res.status(400).json({
+                "status": "error",
+                "error": err.toString()
+            });
+        });
     }
     catch(err){
         res.status(400).json({
