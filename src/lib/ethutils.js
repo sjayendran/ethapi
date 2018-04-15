@@ -8,7 +8,7 @@ const testnetURI = "https://rinkeby.infura.io/8IGObntlVoaKczCsmAak";
 const web3 = new Web3(new Web3.providers.HttpProvider(testnetURI));
 
 //Get balance of Ethereum TEST NET Rinkeby Address
-export const getBalance = (etthaddr, resp) => {
+export const getBalance = (etthaddr) => {
     try{
         return web3.eth.getBalance(etthaddr).then(bal => {
             return Web3.utils.fromWei(bal, 'ether');
@@ -29,7 +29,6 @@ export const createWallet = () => {
 //Execute Transaction between two Ethereum addresses using 
 //the source private key and the destination address
 export const postTransaction = (fromPrivKey, toEthAddr, amount, resp) => {
-    const web3 = new Web3(new Web3.providers.HttpProvider(testnetURI));
     let privateKey = new Buffer(fromPrivKey, 'hex');
     let derivedFromAddress = '0x' + ethUtilLib.privateToAddress(privateKey).toString('hex');
     
@@ -50,24 +49,9 @@ export const postTransaction = (fromPrivKey, toEthAddr, amount, resp) => {
         
             let serializedTx = tx.serialize();
             
-            return web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-                .on('transactionHash', hash => {
-                    console.log('%%% Got transaction HASH:');
-                    console.log(hash);
-                    return hash;
-                })
-                .on('error', error => { 
-                    return error;
-                })
-                .on('confirmation', (confNumber, receipt) => { 
-                    console.log("Confirmation #: " + confNumber);
-                    return confNumber;
-                }).then((receipt) => {
-                    console.log("%%% Receipt mined:");
-                    console.log(receipt);
-                    return receipt;
-                });
+            return sendTransactionAfterSigning(serializedTx);
         }).catch(err => {
+            //primarily to catch insufficient funds error
             respondWithError(err.toString(), resp);
             return null;
         });
@@ -76,6 +60,26 @@ export const postTransaction = (fromPrivKey, toEthAddr, amount, resp) => {
         throw new Error("Invalid Ethereum address; please check and try again!");
     }
 };
+
+const sendTransactionAfterSigning = (serializedTx) => {
+    return web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+        .on('transactionHash', hash => {
+            console.log('%%% Got transaction HASH:');
+            console.log(hash);
+            return hash;
+        })
+        .on('error', error => { 
+            return error;
+        })
+        .on('confirmation', (confNumber) => { 
+            console.log("Confirmation #: " + confNumber);
+            return confNumber;
+        }).then((receipt) => {
+            console.log("%%% Receipt mined:");
+            console.log(receipt);
+            return receipt;
+        });
+}
 
 const validAddress = (addr) => {
     addr = addr.replace("0x", "");

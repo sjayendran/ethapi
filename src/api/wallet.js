@@ -8,20 +8,12 @@ walletAPI.get('/', (req, res) => {
     res.json({ version });
 });
 
-//Handle blank parameter case for get balance route
-walletAPI.get('/getBalance/', (req, res) => {
-    res.status(400).json({
-        "status": "error",
-        "error": "Please pass an Ethereum address as a parameter for the Get Balance REST route!"
-    });
-});
-
 //Route to get the balance of the supplied Ethereum address
 walletAPI.get('/getBalance/:ethaddr', (req, res) => {
     console.log('inside get balance route:');
     console.log(req.params.ethaddr);
     try{
-        getBalance(req.params.ethaddr, res).then(bal => {
+        getBalance(req.params.ethaddr).then(bal => {
             res.status(200).json({
                 "status": "ok",
                 "balance": bal 
@@ -38,7 +30,7 @@ walletAPI.get('/getBalance/:ethaddr', (req, res) => {
 
 //Route to create a new Ethereum wallet with Private Key & Public Address
 walletAPI.get('/createWallet', (req, res) => {
-    let walletDetails = createWallet();
+    const walletDetails = createWallet();
     res.status(201).json({ 
         "status": "ok",
         walletDetails 
@@ -50,7 +42,7 @@ walletAPI.post('/transaction', (req, res) => {
     try{
         postTransaction(req.body.privateKey, req.body.destination, req.body.amount, res).then(result => 
             {	if(result !== null){
-                    res.status(202).json({
+                    res.status(200).json({
                         "status": "ok",
                         "receipt": result
                     });
