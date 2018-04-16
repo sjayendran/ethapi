@@ -25,7 +25,7 @@ Getting Started
 
 ```sh
 # clone it
-git clone git@github.com:skullncode/ethapi.git
+git clone https://github.com/skullncode/ethapi.git
 cd ethapi
 
 # Install dependencies
