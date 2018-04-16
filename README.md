@@ -35,6 +35,9 @@ npm install
 npm start
 
 ```
+Assumptions:
+1) I have not done any Database integration, as there was no mention of such a requirement, and I did not see it as a priority, as creation of an Ethereum wallet, checking the balance of a wallet, as well as sending transactions between wallets, could be entirely done without the use of a Database.
+
 License
 -------
 
